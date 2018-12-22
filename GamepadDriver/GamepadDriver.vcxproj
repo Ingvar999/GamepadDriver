@@ -161,6 +161,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
@@ -180,6 +181,7 @@
       <WppRecorderEnabled>true</WppRecorderEnabled>
       <WppScanConfigurationData Condition="'%(ClCompile.ScanConfigurationData)' == ''">trace.h</WppScanConfigurationData>
       <WppKernelMode>true</WppKernelMode>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);usbdex.lib;ntstrsafe.lib</AdditionalDependencies>
@@ -198,7 +200,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WppEnabled>true</WppEnabled>
+      <WppEnabled>false</WppEnabled>
       <WppRecorderEnabled>true</WppRecorderEnabled>
       <WppScanConfigurationData Condition="'%(ClCompile.ScanConfigurationData)' == ''">trace.h</WppScanConfigurationData>
       <WppKernelMode>true</WppKernelMode>
@@ -209,10 +211,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WppEnabled>true</WppEnabled>
+      <WppEnabled>false</WppEnabled>
       <WppRecorderEnabled>true</WppRecorderEnabled>
       <WppScanConfigurationData Condition="'%(ClCompile.ScanConfigurationData)' == ''">trace.h</WppScanConfigurationData>
       <WppKernelMode>true</WppKernelMode>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);usbdex.lib;ntstrsafe.lib</AdditionalDependencies>

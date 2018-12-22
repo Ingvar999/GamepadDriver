@@ -29,7 +29,7 @@ WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with
 %ManufacturerName%=Standard,NT$ARCH$
 
 [Standard.NT$ARCH$]
-%GamepadDriver.DeviceDesc%=GamepadDriver_Device, USB\VID_vvvv&PID_pppp
+%GamepadDriver.DeviceDesc%=GamepadDriver_Device, USB\VID_1A86&PID_7523
 
 [GamepadDriver_Device.NT]
 CopyFiles=Drivers_Dir
@@ -79,7 +79,7 @@ KmdfLibraryVersion = $KMDFVERSION$
 
 [Strings]
 SPSVCINST_ASSOCSERVICE= 0x00000002
-ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+ManufacturerName="Shymanski Ihar" 
 ClassName="Universal Serial Bus devices"
 DiskName = "GamepadDriver Installation Disk"
 GamepadDriver.DeviceDesc = "GamepadDriver Device"
