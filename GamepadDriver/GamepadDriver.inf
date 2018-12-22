@@ -1,0 +1,87 @@
+;
+; GamepadDriver.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=USBDevice
+ClassGuid={88BAE032-5A81-49f0-BC3D-A4FF138216D6}
+Provider=%ManufacturerName%
+CatalogFile=GamepadDriver.cat
+DriverVer=
+
+[DestinationDirs]
+DefaultDestDir = 12
+GamepadDriver_Device_CoInstaller_CopyFiles = 11
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+GamepadDriver.sys  = 1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%GamepadDriver.DeviceDesc%=GamepadDriver_Device, USB\VID_vvvv&PID_pppp
+
+[GamepadDriver_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+GamepadDriver.sys
+
+[GamepadDriver_Device.NT.HW]
+AddReg=GamepadDriver_AddReg
+
+[GamepadDriver_AddReg]
+; By default, USBDevice class uses iProduct descriptor to name the device in
+; Device Manager on Windows 8 and higher.
+; Uncomment for this device to use %DeviceName% on Windows 8 and higher:
+;HKR,,FriendlyName,,%GamepadDriver.DeviceDesc%
+
+;-------------- Service installation
+[GamepadDriver_Device.NT.Services]
+AddService = GamepadDriver,%SPSVCINST_ASSOCSERVICE%, GamepadDriver_Service_Inst
+
+; -------------- GamepadDriver driver install sections
+[GamepadDriver_Service_Inst]
+DisplayName    = %GamepadDriver.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\GamepadDriver.sys
+
+;
+;--- GamepadDriver_Device Coinstaller installation ------
+;
+
+[GamepadDriver_Device.NT.CoInstallers]
+AddReg=GamepadDriver_Device_CoInstaller_AddReg
+CopyFiles=GamepadDriver_Device_CoInstaller_CopyFiles
+
+[GamepadDriver_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[GamepadDriver_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[GamepadDriver_Device.NT.Wdf]
+KmdfService =  GamepadDriver, GamepadDriver_wdfsect
+[GamepadDriver_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+ClassName="Universal Serial Bus devices"
+DiskName = "GamepadDriver Installation Disk"
+GamepadDriver.DeviceDesc = "GamepadDriver Device"
+GamepadDriver.SVCDESC = "GamepadDriver Service"
+REG_MULTI_SZ = 0x00010000
