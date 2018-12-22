@@ -1,3 +1,4 @@
+#pragma once
 #include "public.h"
 
 EXTERN_C_START

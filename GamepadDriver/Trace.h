@@ -1,4 +1,4 @@
-
+#pragma once
 // Tracing GUID - 53c50173-3c79-4a96-87b4-1dff7969f6c1
 //
 

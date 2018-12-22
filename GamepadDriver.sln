@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27703.2047
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GamepadDriver", "GamepadDriver\GamepadDriver.vcxproj", "{8D31A55F-2AE6-4B7D-8751-4CF5ED98B03D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GamepadDesktop", "GamepadDesktop\GamepadDesktop.vcxproj", "{A665B117-94F6-4812-BDA3-0318B0C03FE5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -41,6 +43,22 @@ Global
 		{8D31A55F-2AE6-4B7D-8751-4CF5ED98B03D}.Release|x86.ActiveCfg = Release|Win32
 		{8D31A55F-2AE6-4B7D-8751-4CF5ED98B03D}.Release|x86.Build.0 = Release|Win32
 		{8D31A55F-2AE6-4B7D-8751-4CF5ED98B03D}.Release|x86.Deploy.0 = Release|Win32
+		{A665B117-94F6-4812-BDA3-0318B0C03FE5}.Debug|ARM.ActiveCfg = Debug|ARM
+		{A665B117-94F6-4812-BDA3-0318B0C03FE5}.Debug|ARM.Build.0 = Debug|ARM
+		{A665B117-94F6-4812-BDA3-0318B0C03FE5}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{A665B117-94F6-4812-BDA3-0318B0C03FE5}.Debug|ARM64.Build.0 = Debug|ARM64
+		{A665B117-94F6-4812-BDA3-0318B0C03FE5}.Debug|x64.ActiveCfg = Debug|x64
+		{A665B117-94F6-4812-BDA3-0318B0C03FE5}.Debug|x64.Build.0 = Debug|x64
+		{A665B117-94F6-4812-BDA3-0318B0C03FE5}.Debug|x86.ActiveCfg = Debug|Win32
+		{A665B117-94F6-4812-BDA3-0318B0C03FE5}.Debug|x86.Build.0 = Debug|Win32
+		{A665B117-94F6-4812-BDA3-0318B0C03FE5}.Release|ARM.ActiveCfg = Release|ARM
+		{A665B117-94F6-4812-BDA3-0318B0C03FE5}.Release|ARM.Build.0 = Release|ARM
+		{A665B117-94F6-4812-BDA3-0318B0C03FE5}.Release|ARM64.ActiveCfg = Release|ARM64
+		{A665B117-94F6-4812-BDA3-0318B0C03FE5}.Release|ARM64.Build.0 = Release|ARM64
+		{A665B117-94F6-4812-BDA3-0318B0C03FE5}.Release|x64.ActiveCfg = Release|x64
+		{A665B117-94F6-4812-BDA3-0318B0C03FE5}.Release|x64.Build.0 = Release|x64
+		{A665B117-94F6-4812-BDA3-0318B0C03FE5}.Release|x86.ActiveCfg = Release|Win32
+		{A665B117-94F6-4812-BDA3-0318B0C03FE5}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
