@@ -14,7 +14,7 @@ typedef struct _DEVICE_CONTEXT
 	WDFUSBPIPE BulkReadPipe;
 	WDFUSBPIPE BulkWritePipe;
 	WDFTIMER Timer;
-	HANDLE FileHandleLogDriver;
+	HANDLE LogFileHandle;
 
 } DEVICE_CONTEXT, *PDEVICE_CONTEXT;
 
