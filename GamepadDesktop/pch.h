@@ -4,5 +4,6 @@
 #include <strsafe.h>
 #include <winusb.h>
 #include <usb.h>
+#include <conio.h>
 
 #include "device.h"

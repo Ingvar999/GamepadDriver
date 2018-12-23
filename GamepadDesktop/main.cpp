@@ -30,5 +30,6 @@ LONG __cdecl _tmain(LONG Argc, LPTSTR *Argv)
         return 0;
     }
     CloseDevice(&deviceData);
+	_getch();
     return 0;
 }

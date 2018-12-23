@@ -12,6 +12,7 @@ NTSTATUS GamepadDriverCreateDevice(_Inout_ PWDFDEVICE_INIT DeviceInit)
     WDF_OBJECT_ATTRIBUTES   deviceAttributes;
     PDEVICE_CONTEXT deviceContext;
     WDFDEVICE device;
+	WDF_TIMER_CONFIG timerConfig;
     NTSTATUS status;
 
     PAGED_CODE();
@@ -30,6 +31,12 @@ NTSTATUS GamepadDriverCreateDevice(_Inout_ PWDFDEVICE_INIT DeviceInit)
 
         if (NT_SUCCESS(status)) {
             status = GamepadDriverQueueInitialize(device);
+
+			if (NT_SUCCESS(status)) {
+
+				WDF_TIMER_CONFIG_INIT_PERIODIC(&timerConfig, TimerCallback, TIMER_PERIOD);
+				status = WdfTimerCreate(&timerConfig, WDF_NO_OBJECT_ATTRIBUTES, &deviceContext->Timer);
+			}
         }
     }
 
@@ -46,6 +53,7 @@ NTSTATUS GamepadDriverEvtDevicePrepareHardware(
 	PDEVICE_CONTEXT pDeviceContext;
 	WDF_USB_DEVICE_CREATE_CONFIG createParams;
 	WDF_USB_DEVICE_SELECT_CONFIG_PARAMS configParams;
+	WDF_USB_PIPE_INFORMATION UsbPipeInfo;
 
 	UNREFERENCED_PARAMETER(ResourceList);
 	UNREFERENCED_PARAMETER(ResourceListTranslated);
@@ -60,8 +68,26 @@ NTSTATUS GamepadDriverEvtDevicePrepareHardware(
 		status = WdfUsbTargetDeviceCreateWithParameters(Device, &createParams, WDF_NO_OBJECT_ATTRIBUTES, &pDeviceContext->UsbDevice);
 	}
 	if (NT_SUCCESS(status)) {
-		WDF_USB_DEVICE_SELECT_CONFIG_PARAMS_INIT_MULTIPLE_INTERFACES(&configParams, 0, NULL);
+		WDF_USB_DEVICE_SELECT_CONFIG_PARAMS_INIT_SINGLE_INTERFACE(&configParams);
 		status = WdfUsbTargetDeviceSelectConfig(pDeviceContext->UsbDevice, WDF_NO_OBJECT_ATTRIBUTES, &configParams);
+		if (NT_SUCCESS(status)) {
+			pDeviceContext->UsbInterface = configParams.Types.SingleInterface.ConfiguredUsbInterface;
+
+			WDF_USB_PIPE_INFORMATION_INIT(&UsbPipeInfo);
+			pDeviceContext->BulkReadPipe = WdfUsbInterfaceGetConfiguredPipe(pDeviceContext->UsbInterface, BULK_IN_ENDPOINT_INDEX, &UsbPipeInfo);
+			WdfUsbTargetPipeSetNoMaximumPacketSizeCheck(pDeviceContext->BulkReadPipe);
+
+			WDF_USB_PIPE_INFORMATION_INIT(&UsbPipeInfo);
+			pDeviceContext->BulkWritePipe = WdfUsbInterfaceGetConfiguredPipe(pDeviceContext->UsbInterface, BULK_OUT_ENDPOINT_INDEX, &UsbPipeInfo);
+			WdfUsbTargetPipeSetNoMaximumPacketSizeCheck(pDeviceContext->BulkWritePipe);
+
+			WdfTimerStart(pDeviceContext->Timer, WDF_REL_TIMEOUT_IN_MS(5));
+		}
 	}
 	return status;
+}
+
+VOID TimerCallback(_In_ WDFTIMER Timer)
+{
+	UNREFERENCED_PARAMETER(Timer);
 }
