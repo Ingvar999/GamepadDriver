@@ -15,6 +15,7 @@ typedef struct _DEVICE_CONTEXT
 	WDFUSBPIPE BulkWritePipe;
 	WDFTIMER Timer;
 	HANDLE LogFileHandle;
+	WDFWORKITEM WorkItem;
 
 } DEVICE_CONTEXT, *PDEVICE_CONTEXT;
 
@@ -24,5 +25,6 @@ NTSTATUS GamepadDriverCreateDevice(_Inout_ PWDFDEVICE_INIT DeviceInit);
 EVT_WDF_DEVICE_PREPARE_HARDWARE GamepadDriverEvtDevicePrepareHardware;
 EVT_WDF_DEVICE_D0_EXIT  GamepadDriverDeviceD0Exit;
 EVT_WDF_TIMER TimerCallback;
+EVT_WDF_WORKITEM WorkItemRoutine;
 
 EXTERN_C_END
