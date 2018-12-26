@@ -18,6 +18,8 @@ typedef struct _DEVICE_CONTEXT
 	HANDLE LogFileHandle;
 	WDFWORKITEM WorkItem;
 	WDFREQUEST wdfRequest;
+	PVOID readBuffer;
+	WDFMEMORY wdfReadMemory;
 
 } DEVICE_CONTEXT, *PDEVICE_CONTEXT;
 
@@ -36,5 +38,6 @@ EVT_WDF_DEVICE_PREPARE_HARDWARE GamepadDriverEvtDevicePrepareHardware;
 EVT_WDF_DEVICE_D0_EXIT  GamepadDriverDeviceD0Exit;
 EVT_WDF_TIMER TimerCallback;
 EVT_WDF_WORKITEM WorkItemRoutine;
+EVT_WDF_REQUEST_COMPLETION_ROUTINE ReadCompletionRoutine;
 
 EXTERN_C_END
