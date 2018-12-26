@@ -86,6 +86,8 @@ NTSTATUS GamepadDriverEvtDevicePrepareHardware(
 	WDF_TIMER_CONFIG timerConfig;
 	WDF_WORKITEM_CONFIG WIConfig;
 	WDF_OBJECT_ATTRIBUTES attributes;
+	WDFMEMORY wdfMemory;
+	PVOID readBuffer;
 
 	UNREFERENCED_PARAMETER(ResourceList);
 	UNREFERENCED_PARAMETER(ResourceListTranslated);
@@ -119,26 +121,48 @@ NTSTATUS GamepadDriverEvtDevicePrepareHardware(
 
 			if (NT_SUCCESS(status)) {
 
-				WDF_WORKITEM_CONFIG_INIT(&WIConfig, WorkItemRoutine);
 				WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
-				WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&attributes, WORK_ITEM_CONTEXT);
 				attributes.ParentObject = Device;
-				status = WdfWorkItemCreate(&WIConfig, &attributes, &deviceContext->WorkItem);
-				WriteLog(deviceContext->LogFileHandle, L"Create work item", status);
+				status = WdfRequestCreate(&attributes, NULL, &deviceContext->wdfRequest);
+				WriteLog(deviceContext->LogFileHandle, L"Create request", status);
 
 				if (NT_SUCCESS(status)) {
 
-					WDF_TIMER_CONFIG_INIT_PERIODIC(&timerConfig, TimerCallback, TIMER_PERIOD);
-					timerConfig.AutomaticSerialization = TRUE;
 					WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
-					attributes.ParentObject = Device;
-					status = WdfTimerCreate(&timerConfig, &attributes, &deviceContext->Timer);
-					WriteLog(deviceContext->LogFileHandle, L"Create Timer", status);
+					attributes.ParentObject = deviceContext->wdfRequest;
+					status = WdfMemoryCreate(&attributes, NonPagedPool, 0, READ_BUFFER_SIZE, &wdfMemory, &readBuffer);
+					WriteLog(deviceContext->LogFileHandle, L"Allocate read buffer", status);
 
 					if (NT_SUCCESS(status)) {
 
-						WdfTimerStart(deviceContext->Timer, WDF_REL_TIMEOUT_IN_MS(5));
-						WriteLog(deviceContext->LogFileHandle, L"Start timer", status);
+						status = WdfUsbTargetPipeFormatRequestForRead(deviceContext->BulkReadPipe, deviceContext->wdfRequest, wdfMemory, NULL);
+						WriteLog(deviceContext->LogFileHandle, L"Configure request", status);
+
+						if (NT_SUCCESS(status)) {
+
+							WDF_WORKITEM_CONFIG_INIT(&WIConfig, WorkItemRoutine);
+							WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
+							WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&attributes, WORK_ITEM_CONTEXT);
+							attributes.ParentObject = Device;
+							status = WdfWorkItemCreate(&WIConfig, &attributes, &deviceContext->WorkItem);
+							WriteLog(deviceContext->LogFileHandle, L"Create work item", status);
+
+							if (NT_SUCCESS(status)) {
+
+								WDF_TIMER_CONFIG_INIT_PERIODIC(&timerConfig, TimerCallback, TIMER_PERIOD);
+								timerConfig.AutomaticSerialization = TRUE;
+								WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
+								attributes.ParentObject = Device;
+								status = WdfTimerCreate(&timerConfig, &attributes, &deviceContext->Timer);
+								WriteLog(deviceContext->LogFileHandle, L"Create Timer", status);
+
+								if (NT_SUCCESS(status)) {
+
+									WdfTimerStart(deviceContext->Timer, WDF_REL_TIMEOUT_IN_MS(5));
+									WriteLog(deviceContext->LogFileHandle, L"Start timer", status);
+								}
+							}
+						}
 					}
 				}
 			}
