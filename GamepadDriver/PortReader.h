@@ -1,0 +1,16 @@
+#pragma once
+
+typedef struct _WORK_ITEM_CONTEXT
+{
+	WCHAR message[50];
+	NTSTATUS status;
+
+} WORK_ITEM_CONTEXT, *PWORK_ITEM_CONTEXT;
+
+WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(WORK_ITEM_CONTEXT, WorkItemGetContext)
+
+NTSTATUS ReaderSart(_In_ WDFDEVICE Device);
+
+EVT_WDF_TIMER TimerCallback;
+EVT_WDF_WORKITEM WorkItemRoutine;
+EVT_WDF_REQUEST_COMPLETION_ROUTINE ReadCompletionRoutine;
