@@ -7,6 +7,27 @@
 #endif
 
 
+VOID WriteLogByWorkItem(PDEVICE_CONTEXT deviceContext, LPWCH msg, NTSTATUS status) {
+	PWORK_ITEM_CONTEXT context;
+	DWORD32 i = 0;
+
+	context = WorkItemGetContext(deviceContext->WorkItem);
+	context->status = status;
+	while (context->message[i++] = *(msg++));
+
+	WdfWorkItemEnqueue(deviceContext->WorkItem);
+}
+
+VOID WorkItemRoutine(WDFWORKITEM WorkItem) {
+	NTSTATUS status;
+	PDEVICE_CONTEXT deviceContext;
+	PWORK_ITEM_CONTEXT context;
+
+	deviceContext = DeviceGetContext(WdfWorkItemGetParentObject(WorkItem));
+	context = WorkItemGetContext(WorkItem);
+	WriteLog(deviceContext->LogFileHandle, context->message, context->status);
+}
+
 NTSTATUS GamepadDriverCreateDevice(_Inout_ PWDFDEVICE_INIT DeviceInit)
 {
     WDF_PNPPOWER_EVENT_CALLBACKS pnpPowerCallbacks;
@@ -100,6 +121,7 @@ NTSTATUS GamepadDriverEvtDevicePrepareHardware(
 
 				WDF_WORKITEM_CONFIG_INIT(&WIConfig, WorkItemRoutine);
 				WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
+				WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&attributes, WORK_ITEM_CONTEXT);
 				attributes.ParentObject = Device;
 				status = WdfWorkItemCreate(&WIConfig, &attributes, &deviceContext->WorkItem);
 				WriteLog(deviceContext->LogFileHandle, L"Create work item", status);
@@ -144,21 +166,9 @@ NTSTATUS GamepadDriverDeviceD0Exit(WDFDEVICE  Device, WDF_POWER_DEVICE_STATE  Ta
 
 VOID TimerCallback(_In_ WDFTIMER Timer)
 {
-	WDFDEVICE Device;
 	NTSTATUS status;
 	PDEVICE_CONTEXT deviceContext;
 
-	Device = WdfTimerGetParentObject(Timer);
-	deviceContext = DeviceGetContext(Device);
-	WdfWorkItemEnqueue(deviceContext->WorkItem);
-}
-
-VOID WorkItemRoutine(WDFWORKITEM WorkItem) {
-	WDFDEVICE Device;
-	NTSTATUS status;
-	PDEVICE_CONTEXT deviceContext;
-
-	Device = WdfWorkItemGetParentObject(WorkItem);
-	deviceContext = DeviceGetContext(Device);
-	WriteLog(deviceContext->LogFileHandle, L"Timer callback", 0);
+	deviceContext = DeviceGetContext(WdfTimerGetParentObject(Timer));
+	WriteLogByWorkItem(deviceContext, L"Timer Callback", 0);
 }
